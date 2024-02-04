@@ -1,38 +1,39 @@
-name: login_automation
-'on':
+name: Login Automation
+
+on:
   push:
     branches:
       - main
   pull_request:
     branches:
       - main
-permissions:
-  contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu
+  run_tests:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: setup python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.10'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - uses: actions/checkout@v3
-        if: success() || failure()
-      - run: |
-          cd testCases
-          mkdir -p reports
-          pytest test_login.py --html=reports/reports.html
-      - name: set output
-        if: success() || failure()
-        id: results
-        run: echo "artifactPath=testCases/reports/" >> $GITHUB_OUTPUT
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          name: test-report
-          path: '${{ steps.result.outputs.artifactPath }}'
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Selenium tests
+      run: |
+        cd testCases
+        pytest test_login.py
+
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: testCases/reports
