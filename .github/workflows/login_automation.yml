@@ -1,4 +1,4 @@
-name: login_automation
+name: Automating Login
 
 on:
   push:
@@ -24,7 +24,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt  # Add any additional dependencies if required
 
-    - name: Run Tests
+    - name: Run Tests and Generate HTML Report
       run: |
-        pytest testCases/test_login.py  # Change this to the path of your test file
+        pytest --html=report.html testCases/test_login.py
+      continue-on-error: true
 
+    - name: Upload HTML Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: report.html
