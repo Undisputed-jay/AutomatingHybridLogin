@@ -26,5 +26,5 @@ jobs:
 
     - name: Run Tests
       run: |
-        pytest test/test_login.py  # Change this to the path of your test file
+        pytest testCases/test_login.py  # Change this to the path of your test file
 
