@@ -1,38 +1,30 @@
 name: login_automation
-'on':
+
+on:
   push:
     branches:
-      - main
+      - main  # Change this to your default branch if different
   pull_request:
-    branches:
-      - main
-permissions:
-  contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu
+  test:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: setup python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.10'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - uses: actions/checkout@v3
-        if: success() || failure()
-      - run: |
-          cd testCases
-          mkdir -p reports
-          pytest test_login.py --browser=chrome --html=reports/reports.html
-      - name: set output
-        if: success() || failure()
-        id: results
-        run: echo "artifactPath=testCases/reports/" >> $GITHUB_OUTPUT
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          name: test-report
-          path: '${{ steps.result.outputs.artifactPath }}'
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8  # Change this to your desired Python version
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Add any additional dependencies if required
+
+    - name: Run Tests
+      run: |
+        pytest test/test_login.py  # Change this to the path of your test file
+
