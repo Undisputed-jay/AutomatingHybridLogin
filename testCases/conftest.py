@@ -27,7 +27,10 @@ def setup_and_teardown(request):
     global driver
     driver = None
     if browser.__eq__("chrome"):
-        driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
+        driver = webdriver.Chrome(options=options)
     elif browser.__eq__("firefox"):
         driver = webdriver.Firefox()
     elif browser.__eq__("edge"):
